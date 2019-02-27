@@ -1,0 +1,36 @@
+version: "3.7"
+
+services:
+  restservice:
+    build: 
+      context: .
+      dockerfile : restservice.dockerfile
+    ports:
+      - "8082:8082"
+    networks: 
+      - isolated_nw2
+    volumes: 
+      - /tmp
+    depends_on:
+      - pgdb
+  pgdb:
+    build: 
+      context: .
+      dockerfile : postgres.dockerfile
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    networks: 
+      - isolated_nw2
+    environment:
+      POSTGRES_DB : db
+      POSTGRES_USER : user
+      POSTGRES_PASSWORD : psswd
+networks:
+  isolated_nw2:
+    driver: bridge
+
+volumes:
+  db-data:
+    driver: local
